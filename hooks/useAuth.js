@@ -2,21 +2,23 @@ import { create } from 'zustand'; // o usar Context si prefieres
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const useAuth = create((set) => ({
-  token: null,
+  user: null,
   isAuthenticated: false,
 
-  login: async (token) => {
-    await AsyncStorage.setItem('userToken', token);
-    set({ token, isAuthenticated: true });
+  login: async (userToken) => {
+    await AsyncStorage.setItem('userToken', userToken);
+    set({ user: userToken, isAuthenticated: true });
   },
 
   logout: async () => {
     await AsyncStorage.removeItem('userToken');
-    set({ token: null, isAuthenticated: false });
+    set({ user: null, isAuthenticated: false });
   },
 
-  initialize: async () => {
-    const token = await AsyncStorage.getItem('userToken');
-    set({ token, isAuthenticated: !!token });
+  loadUser: async () => {
+    const storedUser = await AsyncStorage.getItem('userToken');
+    if(storedUser) {
+        set({ user: storedUser, isAuthenticated: !!token });
+    }
   }
 }));
