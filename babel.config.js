@@ -12,6 +12,8 @@ module.exports = function(api) {
           '@services': './services',
           '@hooks': './hooks',
           '@context': './context',
+          '@schemas': './schemas',
+          '@config': './config',
         }
       }
     ]],

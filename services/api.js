@@ -1,7 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { router } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useAuth } from '../hooks/useAuth';
 
 const api = axios.create({
     baseURL: 'http://localhost:7254',
@@ -23,13 +22,11 @@ api.interceptors.request.use(
 );
 
 // Interceptor for responses - handle expired/invalid token
-api.interceptors.request.use(
+api.interceptors.response.use(
     (response) => response, async (error) => {
-        if (error.response?.status === 401 && !error.config.url.includes('auth')) {
-            // await AsyncStorage.removeItem('UserToken');
-            // router.replace('/sign-in');
-            useAuth.getState().logout();
-        }
+        // if (error.response?.status === 401 && error.response) {
+        //   return Promise.reject(error);
+        // }
         return Promise.reject(error);
     }
 );

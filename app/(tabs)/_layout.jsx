@@ -1,7 +1,7 @@
 import { View, Text, Image } from 'react-native'
 import { Tabs, Redirect } from 'expo-router'
-
 import { icons } from '@constants'
+import useAuthStore from '@context/useAuthStore'
 
 
 const TabIcon = ({ icon, color, name, focused }) => {
@@ -20,6 +20,13 @@ const TabIcon = ({ icon, color, name, focused }) => {
   )}
 
 const TabsLayout = () => {
+  
+  const { isAuthenticated } = useAuthStore()
+
+  if(!isAuthenticated) {
+    return <Redirect href="/sign-in"/>
+  }
+
   return (
     <>
     <Tabs

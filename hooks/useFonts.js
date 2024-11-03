@@ -3,7 +3,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
 export function useCustomFonts() {
-    const [fontsLoaded, error] = useFonts({
+    const [fontsLoaded, fontError] = useFonts({
         "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
         "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
         "Poppins-ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
@@ -16,12 +16,12 @@ export function useCustomFonts() {
     });
 
     useEffect(() => {
-        if (error) throw error;
+        if (fontError) throw fontError;
 
         if (fontsLoaded) {
             SplashScreen.hideAsync();
         }
-    }, [fontsLoaded, error]);
+    }, [fontsLoaded, fontError]);
 
-    return [fontsLoaded, error];
+    return [fontsLoaded, fontError];
 } 

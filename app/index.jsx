@@ -4,13 +4,11 @@ import { Redirect, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '@constants';
 import CustomButton from '@components/CustomButton';
-import { AuthProvider } from '@context/AuthContext';
 
 export default function App() {
   return (
-    <AuthProvider>
       <SafeAreaView className="bg-primary h-full">
-        <ScrollView contentContainerStyle={{ heigh:'100%'}}>
+        <ScrollView contentContainerStyle={{ height:'100%'}}>
           <View className="w-full justify-center items-center px-4 min-h-[85vh]">
             <Image 
             source={images.logo}
@@ -39,6 +37,5 @@ export default function App() {
         </ScrollView>
         <StatusBar backgroundColor='' style='light' />
       </SafeAreaView>
-    </AuthProvider>
   );
 }

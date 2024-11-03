@@ -1,5 +1,5 @@
-import { TouchableOpacity, Text } from "react-native";
 import React from "react";
+import { Pressable, Text } from "react-native";
 
 const CustomButton = ({
   title,
@@ -9,10 +9,10 @@ const CustomButton = ({
   isLoading,
 }) => {
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={handlePress}
-      acttiveOpacity={0.7}
-      className={`bg-secondary rounded-xl min-h-[62px] justify-center items-center ${containerStyles} ${
+      activeOpacity={0.7}
+      className={`bg-gray-900 px-6 py-3 rounded-xl ${containerStyles} ${
         isLoading ? "bg-opacity-50" : ""
       }`}
       disabled={isLoading}
@@ -20,7 +20,7 @@ const CustomButton = ({
       <Text className={`text-primary font-psemibold text-lg ${textStyles}`}>
         {title}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
