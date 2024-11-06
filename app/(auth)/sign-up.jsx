@@ -1,11 +1,11 @@
-import { Image, View, Text, ScrollView, ActivityIndicator } from 'react-native'
+import { View, Text, ScrollView, ActivityIndicator } from 'react-native'
 import { useState } from 'react'
+import { Link, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { images } from '@constants'
+import Logo from '@assets/logo.svg'
 import FormField from '@components/FormField'
 import CustomButton from '@components/CustomButton'
 import CustomAlert from '@components/CustomAlert'
-import { Link, router } from 'expo-router'
 import useAuthStore from '@context/useAuthStore'
 import { ValidationError } from 'yup'
 import { registerValidationSchema } from '@schemas/login'
@@ -42,37 +42,15 @@ const SignUp = () => {
     }
   };
 
-  const validateForm = (form) => {
-    if (!form.email || !form.password || !form.username) {
-      setError("Please fill in all fields");
-      return false;
-    }
-    if (!form.email.includes("@")) {
-      setError("Please enter a valid email address");
-      return false;
-    }
-    if (form.password.length < 6) {
-      setError("Password must be at least 6 characters long");
-      return false;
-    }
-    if (form.username.length < 3) {
-      setError("Username must be at least 3 characters long");
-      return false;
-    }
-    return true;
-  };
-
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
-        <View className="w-full justify-center min-h-[70vh] px-4 my-6">
-          <Image
-            source={images.logo}
-            resizeMode="contain"
-            className="w-[130px] h-[35px]"
-          />
 
-          <Text className="text-2xl text-white text-semibold font-psemibold mt-10">
+        <Logo className="relative top-10 left-4" />
+          
+        <View className="w-full justify-center min-h-[70vh] px-4 my-6">  
+
+          <Text className="text-2xl text-secondary text-semibold font-psemibold mt-10 mb-2">
             Sign Up
           </Text>
 
@@ -84,19 +62,19 @@ const SignUp = () => {
 
           {loading ? (
             <View className="mt-7">
-              <ActivityIndicator size="large" color="#000" />
+              <ActivityIndicator size="large" color="#111827" />
             </View>
           ) : (
             <View>
               <FormField
-                title="Username"
+                label="Username"
                 value={form.username}
                 handleChangeText={(e) => setForm({ ...form, username: e })}
                 otherStyles="mt-7"
               />
 
               <FormField
-                title="Email"
+                label="Email"
                 value={form.email}
                 handleChangeText={(e) => setForm({ ...form, email: e })}
                 otherStyles="mt-7"
@@ -104,7 +82,7 @@ const SignUp = () => {
               />
 
               <FormField
-                title="Password"
+                label="Password"
                 value={form.password}
                 handleChangeText={(e) => setForm({ ...form, password: e })}
                 otherStyles="mt-7"
@@ -118,7 +96,7 @@ const SignUp = () => {
               />
 
               <View className="justify-center pt-5 flex-row gap-2">
-                <Text className="text-lg text-gray-100 font-pregular">
+                <Text className="text-lg text-gray-400 font-pregular">
                   Have an account already?
                 </Text>
                 <Link

@@ -16,8 +16,6 @@ module.exports = {
         },
         secondary: {
           DEFAULT: "#111827",
-          100: "#FF9001",
-          200: "#FF8E01",
         },
         black: {
           DEFAULT: "#000",
@@ -29,6 +27,11 @@ module.exports = {
         },
       },
       fontFamily: {
+        csansregular: ["CerebriSans-Regular", "sans-serif"],
+        csansmedium: ["CerebriSans-Medium", "sans-serif"],
+        csanssemibold: ["CerebriSans-SemiBold", "sans-serif"],
+        csansbold: ["CerebriSans-Bold", "sans-serif"],
+        csansextrabold: ["CerebriSans-ExtraBold", "sans-serif"],
         pthin: ["Poppins-Thin", "sans-serif"],
         pextralight: ["Poppins-ExtraLight", "sans-serif"],
         plight: ["Poppins-Light", "sans-serif"],
