@@ -1,9 +1,7 @@
-import { NavigationContainer } from '@react-navigation/native';
 import { NativeWindStyleSheet } from "nativewind"; // Import the NativeWindStyleSheet from the "nativewind" to set Output to 'native', without this the web styles won't work
 import { SplashScreen, Stack } from 'expo-router'
 import { useEffect } from 'react';
 import { useCustomFonts } from '@hooks/useFonts';
-import { linking }from '@config/linkingConfig';
 import useAuthStore from '@context/useAuthStore';
 
 NativeWindStyleSheet.setOutput({

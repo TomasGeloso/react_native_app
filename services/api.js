@@ -1,9 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { router } from 'expo-router';
 
 const api = axios.create({
-    baseURL: 'http://192.168.1.2:7254',
+    baseURL: 'http://192.168.1.11:7254',
     headers: {
         'Content-Type': 'application/json',
     }
@@ -12,7 +11,7 @@ const api = axios.create({
 // Interceptor for requests - add token if exists
 api.interceptors.request.use(
     async (config) => {
-        const token = await AsyncStorage.getItem('UserToken');
+        const token = await AsyncStorage.getItem('userToken');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }

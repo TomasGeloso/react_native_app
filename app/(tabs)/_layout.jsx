@@ -1,18 +1,15 @@
 import { View, Text, Image } from 'react-native'
 import { Tabs, Redirect } from 'expo-router'
-import { icons } from '@constants'
 import useAuthStore from '@context/useAuthStore'
-
+import { Home, User, Bookmark, Plus } from 'react-native-feather'
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
     <View className="items-center justify-center gap-1">
-      <Image
-        source={icon}
-        resizeMode="contain"
-        tintColor={color}
-        className="w-6 h-6"        
-      />
+      {name === 'Home' && <Home color={color} /> }
+      {name === 'Profile' && <User color={color} />}
+      {name === 'Bookmark' && <Bookmark color={color} />}
+      {name === 'Create' && <Plus color={color} />}
       <Text className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`}>
         {name}
       </Text>
@@ -48,7 +45,7 @@ const TabsLayout = () => {
         headerShown: false,
         tabBarIcon: ({color, focused}) =>(
           <TabIcon 
-          icon={icons.home}
+          icon={"home"}
           color={color}
           name="Home"
           focused={focused}
@@ -62,7 +59,7 @@ const TabsLayout = () => {
         headerShown: false,
         tabBarIcon: ({color, focused}) =>(
           <TabIcon 
-          icon={icons.profile}
+          icon={"profile"}
           color={color}
           name="Profile"
           focused={focused}
@@ -76,7 +73,7 @@ const TabsLayout = () => {
         headerShown: false,
         tabBarIcon: ({color, focused}) =>(
           <TabIcon 
-          icon={icons.bookmark}
+          icon={"bookmark"}
           color={color}
           name="Bookmark"
           focused={focused}
@@ -90,7 +87,7 @@ const TabsLayout = () => {
         headerShown: false,
         tabBarIcon: ({color, focused}) =>(
           <TabIcon 
-          icon={icons.plus}
+          icon={"plus"}
           color={color}
           name="Create"
           focused={focused}

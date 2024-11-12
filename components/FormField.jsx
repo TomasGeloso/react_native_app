@@ -1,6 +1,5 @@
-import { View, Text, TextInput, Pressable, Image } from 'react-native'
+import { View, Text, TextInput, Pressable } from 'react-native'
 import { useState } from 'react'
-import { icons } from '../constants'
 import { EyeOff, Eye } from 'react-native-feather'
 
 const FormField = ({ label, value, placeholder, handleChangeText, otherStyles, ...props }) => {
@@ -24,9 +23,9 @@ const FormField = ({ label, value, placeholder, handleChangeText, otherStyles, .
             className="absolute right-3 top-4" 
             onPress={() => setshowPassword(!showPassword)}>
                 {showPassword ? (
-                  <EyeOff stroke='gray' width={24} height={24} />
+                  <EyeOff color='gray' width={24} height={24} />
                 ):(
-                  <Eye stroke='gray' width={24} height={24} />
+                  <Eye color='gray' width={24} height={24} />
                 )}
             </Pressable>
         )}

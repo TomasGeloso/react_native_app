@@ -20,7 +20,7 @@ const Profile = () => {
 
           <CustomButton 
             title="Sign Out"
-            handlePress={logout}
+            onPress={logout}
             containerStyles="w-full mt-7"
           />
         </View>
