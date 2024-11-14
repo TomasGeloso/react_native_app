@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, FlatList, Pressable, TextInput, Modal, SafeAreaView, ScrollView, ActivityIndicator, Platform } from 'react-native';
 import { MoreVertical, Search, Plus, Camera } from 'react-native-feather';
-import useSample from '@hooks/useSample';
+import {Picker} from '@react-native-picker/picker';
 import Logo from '@assets/logo.svg';
+import useSample from '@hooks/useSample';
 import FormField from '@components/FormField';
 import CustomButton from '@components/CustomButton';
-import { Picker } from 'react-native-picker/picker';
+import CustomAlert from '@components/CustomAlert';
 
 const Home = () => {
   const { samples, loading, error } = useSample();
@@ -64,8 +65,6 @@ const Home = () => {
         <Logo className="m-4" width={200} height={50} />
       </View>
 
-      {error ? <CustomAlert message={error} /> : null}
-
       {loading ? (
         <View className="mt-7">
           <ActivityIndicator size="large" color="#111827" />
@@ -97,6 +96,8 @@ const Home = () => {
         </View>
       )}
 
+      {error ? <CustomAlert containerStyles="m-2" message={error.message} /> : null}
+
       <Pressable
         className="absolute right-5 bottom-5 bg-secondary w-14 h-14 rounded-xl justify-center items-center shadow-lg"
         onPress={handleAddSample}
@@ -127,6 +128,7 @@ const Home = () => {
 
                 <Picker
                   selectedValue={selectedSampleType}
+                  className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-xl text-gray-900 pr-12"
                   onValueChange={(sampleTypeValue, sampleTypeIndex) =>
                     setSelectedLanguage(sampleTypeValue)
                   }

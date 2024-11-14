@@ -1,12 +1,13 @@
 import { NativeWindStyleSheet } from "nativewind"; // Import the NativeWindStyleSheet from the "nativewind" to set Output to 'native', without this the web styles won't work
+import '../global.css';
 import { SplashScreen, Stack } from 'expo-router'
 import { useEffect } from 'react';
 import { useCustomFonts } from '@hooks/useFonts';
 import useAuthStore from '@context/useAuthStore';
 
-NativeWindStyleSheet.setOutput({
-  default: "native",
-});
+// NativeWindStyleSheet.setOutput({
+//   default: "native",
+// });
 SplashScreen.preventAutoHideAsync(); // Prevents the splash screen from hiding automatically
 
 const RootLayout = () => {
