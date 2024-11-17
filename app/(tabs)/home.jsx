@@ -1,24 +1,59 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, FlatList, Pressable, TextInput, Modal, SafeAreaView, ScrollView, ActivityIndicator, Platform } from 'react-native';
-import { MoreVertical, Search, Plus, Camera } from 'react-native-feather';
-import {Picker} from '@react-native-picker/picker';
-import Logo from '@assets/logo.svg';
-import useSample from '@hooks/useSample';
-import FormField from '@components/FormField';
-import CustomButton from '@components/CustomButton';
-import CustomAlert from '@components/CustomAlert';
+import React, { useState, useCallback, useEffect } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  Pressable,
+  TextInput,
+  Modal,
+  SafeAreaView,
+  ScrollView,
+  ActivityIndicator,
+  Platform,
+  KeyboardAvoidingView,
+} from "react-native";
+import { MoreVertical, Search, Plus, Camera } from "react-native-feather";
+import DropDownPicker from "react-native-dropdown-picker";
+import Logo from "@assets/logo.svg";
+import useSample from "@hooks/useSample";
+import FormField from "@components/FormField";
+import CustomButton from "@components/CustomButton";
+import CustomAlert from "@components/CustomAlert";
+import CustomPicker from "@components/CustomPicker";
 
 const Home = () => {
   const { samples, loading, error } = useSample();
 
-  const [searchQuery, setSearchQuery] = useState('');
+  // Home screen states
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedSample, setSelectedSample] = useState(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
 
-  //  modal states
+  // Modal states
+  const [dropdownStates, setDropdownStates] = useState({  // dropdown open/close states
+    sampleTypes: false,
+    materials: false,
+    testSpecimenTypes: false,
+  });
+
   const [selectedSampleType, setSelectedSampleType] = useState(null);
-  const [selectedTestSpecimenType, setSelectedTestSpecimenType] = useState(null);
+  const [sampleTypes, setSampleTypes] = useState([
+    { label: "Apple", value: "apple" },
+    { label: "Banana", value: "banana" },
+  ]);
+
+  const [selectedTestSpecimenType, setSelectedTestSpecimenType] =
+    useState(null);
+  const [testSpecimenTypes, setTestSpecimenTypes] = useState([
+    { label: "Apple", value: "apple" },
+    { label: "Banana", value: "banana" },
+  ]);
+
   const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [materials, setMaterials] = useState([
+    { label: "Apple", value: "apple" },
+    { label: "Banana", value: "banana" },
+  ]);
 
   const filteredSamples = samples.filter(
     (sample) =>
@@ -29,9 +64,8 @@ const Home = () => {
   const renderSample = useCallback(
     ({ item }) => (
       <Pressable className="flex-row m-2 bg-white rounded-xl border border-gray-300 p-1">
-        
         <View className="bg-primary-100 rounded-md h-[50px] w-[50px] my-auto mr-2"></View>
-        
+
         <View className="flex-1">
           <Text className="text-lg font-bold">M {item.sample_Number}</Text>
           <Text>{item.dimentions}</Text>
@@ -56,13 +90,23 @@ const Home = () => {
 
   const handleCreateSample = useCallback(() => {}, []);
 
+  const handleOpenDropdown = useCallback((dropdownId) => {
+    setDropdownStates((prevState) => ({
+      ...prevState,
+      sampleTypes: false,
+      materials: false,
+      testSpecimenTypes: false,
+      [dropdownId]: !prevState[dropdownId],
+    }));
+  }, []);
+
   return (
     <SafeAreaView
       className="h-full"
       style={Platform.OS !== "web" ? { paddingTop: 48 } : {}}
     >
-      <View>
-        <Logo className="m-4" width={200} height={50} />
+      <View className="m-4">
+        <Logo width={200} height={50} />
       </View>
 
       {loading ? (
@@ -96,7 +140,9 @@ const Home = () => {
         </View>
       )}
 
-      {error ? <CustomAlert containerStyles="m-2" message={error.message} /> : null}
+      {error ? (
+        <CustomAlert containerStyles="m-2" message={error.message} />
+      ) : null}
 
       <Pressable
         className="absolute right-5 bottom-5 bg-secondary w-14 h-14 rounded-xl justify-center items-center shadow-lg"
@@ -108,12 +154,17 @@ const Home = () => {
       <Modal
         visible={detailModalVisible}
         animationType="slide"
-        transparent={true}
+        transparent={false}
         onRequestClose={() => setDetailModalVisible(false)}
       >
-        <View className="h-full bg-primary">
-          <View className="m-2">
-            <Text className="text-2xl font-csanssemibold">Crear Muestra</Text>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "android" ? "padding" : "height"}
+          className="h-full"
+        >
+          <ScrollView className="h-full bg-primary">
+            <View className="m-2 bg-primary z-40">
+              <Text className="text-2xl font-csanssemibold">Crear Muestra</Text>
+            </View>
 
             <View className="m-2">
               <View className="flex justify-center items-center bg-primary-100 rounded-md h-32 w-32 my-auto mr-2">
@@ -123,23 +174,56 @@ const Home = () => {
               <View className="mt-2">
                 <FormField
                   label="Número de Muestra"
+                  placeholder="Ej: 001"
+                  otherStyles="my-2"
                   value={selectedSample?.sample_Number}
                 />
 
-                <Picker
-                  selectedValue={selectedSampleType}
-                  className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-xl text-gray-900 pr-12"
-                  onValueChange={(sampleTypeValue, sampleTypeIndex) =>
-                    setSelectedLanguage(sampleTypeValue)
-                  }
-                >
-                  <Picker.Item label="Java" value="java" />
-                  <Picker.Item label="JavaScript" value="js" />
-                </Picker>
+                <CustomPicker
+                  label="Tipo de Muestra"
+                  className="my-2 z-30"
+                  open={dropdownStates.sampleTypes}
+                  items={sampleTypes}
+                  value={selectedSampleType}
+                  setOpen={() => handleOpenDropdown("sampleTypes")}
+                  setValue={setSelectedSampleType}
+                  setItems={setSampleTypes}
+                />
+                <CustomPicker
+                  label="Material"
+                  className="my-2 z-20"
+                  open={dropdownStates.materials}
+                  items={materials}
+                  value={selectedMaterial}
+                  setOpen={() => handleOpenDropdown("materials")}
+                  setValue={setSelectedMaterial}
+                  setItems={setMaterials}
+                />
+
+                <CustomPicker
+                  label="Tipo de Probeta"
+                  className="my-2 z-10"
+                  open={dropdownStates.testSpecimenTypes}
+                  items={testSpecimenTypes}
+                  value={selectedTestSpecimenType}
+                  setOpen={() => handleOpenDropdown("testSpecimenTypes")}
+                  setValue={setSelectedTestSpecimenType}
+                  setItems={setTestSpecimenTypes}
+                />
 
                 <FormField
                   label="Dimensiones"
+                  placeholder="Ej: 10x10x10"
+                  otherStyles="my-2"
                   value={selectedSample?.dimentions}
+                />
+
+                <FormField
+                  label="Observaciones"
+                  placeholder="Observaciones..."
+                  otherStyles="my-2"
+                  value={selectedSample?.observations}
+                  multiline
                 />
 
                 <View className="flex-row justify-end items-center m-2 ">
@@ -147,7 +231,10 @@ const Home = () => {
                     title="Cancelar"
                     type="secondary"
                     containerStyles="mr-2"
-                    onPress={() => setDetailModalVisible(false)}
+                    onPress={() => {
+                      setDetailModalVisible(false); // close modal
+                      handleOpenDropdown(false); // close all dropdowns
+                    }}
                   />
                   <CustomButton
                     title="Crear"
@@ -157,11 +244,11 @@ const Home = () => {
                 </View>
               </View>
             </View>
-          </View>
-        </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
-}
+};
 
 export default Home;
