@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import { View, Text, ScrollView, ActivityIndicator } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, router } from 'expo-router'
-import Logo from '@assets/logo.svg'
-import FormField from '@components/FormField'
-import CustomButton from '@components/CustomButton'
-import CustomAlert from '@components/CustomAlert'
-import useAuthStore from '@context/useAuthStore'
-import { loginValidationSchema } from '@schemas/login'
-import { ValidationError } from 'yup'
+import { useState } from "react";
+import { View, Text, ScrollView, ActivityIndicator } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Link, router } from "expo-router";
+import Logo from "@assets/logo.svg";
+import FormField from "@components/FormField";
+import CustomButton from "@components/CustomButton";
+import CustomAlert from "@components/CustomAlert";
+import useAuthStore from "@context/useAuthStore";
+import { loginValidationSchema } from "@schemas/login";
+import { ValidationError } from "yup";
 
 const SignIn = () => {
   const { login } = useAuthStore();
@@ -17,7 +17,7 @@ const SignIn = () => {
 
   const [form, setForm] = useState({
     email: "",
-    password: ""
+    password: "",
   });
 
   const handleSubmit = async () => {
@@ -28,11 +28,11 @@ const SignIn = () => {
       await login(form.email, form.password);
       router.replace("/home");
     } catch (error) {
-      if(error.response && error.response.status === 401) {
+      if (error.response && error.response.status === 401) {
         setError(error.response.data);
-      } else if(error instanceof ValidationError) {
+      } else if (error instanceof ValidationError) {
         setError(error.message);
-      } else{
+      } else {
         console.log(error);
         setError("An error occurred. Please try again");
       }
@@ -44,19 +44,18 @@ const SignIn = () => {
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
-        <Logo className="relative top-10 left-4" />
+        <View className="relative top-4 left-4">
+          <Logo />
+        </View>
 
-        <View className="w-full justify-center min-h-[70vh] px-4 my-6">
-
-          <Text className="text-2xl text-secondary text-semibold font-psemibold mt-10 mb-2">
+        <View className="w-full justify-center min-h-[80vh] px-5">
+          <Text className="text-3xl text-secondary text-semibold font-psemibold mb-3">
             Sign In
           </Text>
 
           {error ? ( // Displays the error message if there is an error
-            <CustomAlert 
-              message={error}
-            /> 
-          ) : null }
+            <CustomAlert message={error} />
+          ) : null}
 
           {loading ? ( // Displays the loading spinner if the loading state is true
             <View className="mt-7">
@@ -68,8 +67,8 @@ const SignIn = () => {
                 label="Email"
                 value={form.email}
                 handleChangeText={(e) => setForm({ ...form, email: e })}
-                placeholder="juan@example.com"
-                otherStyles="mt-7"
+                placeholder="Ej: juan@example.com"
+                otherStyles="mt-2"
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
@@ -79,8 +78,8 @@ const SignIn = () => {
                 value={form.password}
                 handleChangeText={(e) => setForm({ ...form, password: e })}
                 placeholder="********"
-                otherStyles="mt-7"
-                secureTextEntry // Hides the password
+                otherStyles="mt-2"
+                password
               />
 
               <CustomButton
@@ -109,4 +108,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn
+export default SignIn;

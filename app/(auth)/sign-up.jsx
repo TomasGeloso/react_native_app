@@ -1,18 +1,18 @@
-import { View, Text, ScrollView, ActivityIndicator } from 'react-native'
-import { useState } from 'react'
-import { Link, router } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Logo from '@assets/logo.svg'
-import FormField from '@components/FormField'
-import CustomButton from '@components/CustomButton'
-import CustomAlert from '@components/CustomAlert'
-import useAuthStore from '@context/useAuthStore'
-import { ValidationError } from 'yup'
-import { registerValidationSchema } from '@schemas/login'
+import { View, Text, ScrollView, ActivityIndicator } from "react-native";
+import { useState } from "react";
+import { Link, router } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Logo from "@assets/logo.svg";
+import FormField from "@components/FormField";
+import CustomButton from "@components/CustomButton";
+import CustomAlert from "@components/CustomAlert";
+import useAuthStore from "@context/useAuthStore";
+import { ValidationError } from "yup";
+import { registerValidationSchema } from "@schemas/login";
 
 const SignUp = () => {
   const { register } = useAuthStore();
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [form, setForm] = useState({
@@ -45,20 +45,18 @@ const SignUp = () => {
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
+        <View className="relative top-4 left-4">
+          <Logo />
+        </View>
 
-        <Logo className="relative top-10 left-4" />
-          
-        <View className="w-full justify-center min-h-[70vh] px-4 my-6">  
-
-          <Text className="text-2xl text-secondary text-semibold font-psemibold mt-10 mb-2">
+        <View className="w-full justify-center min-h-[80vh] px-5">
+          <Text className="text-3xl text-secondary text-semibold font-psemibold mb-3">
             Sign Up
           </Text>
 
           {error ? ( // Displays the error message if there is an error
-            <CustomAlert 
-              message={error}
-            />
-          ) : null }
+            <CustomAlert message={error} />
+          ) : null}
 
           {loading ? (
             <View className="mt-7">
@@ -68,24 +66,28 @@ const SignUp = () => {
             <View>
               <FormField
                 label="Username"
+                placeholder="Ej: John Doe"
                 value={form.username}
                 handleChangeText={(e) => setForm({ ...form, username: e })}
-                otherStyles="mt-7"
+                otherStyles="mt-2"
               />
 
               <FormField
                 label="Email"
+                placeholder="Ej: juan@example.com"
                 value={form.email}
                 handleChangeText={(e) => setForm({ ...form, email: e })}
-                otherStyles="mt-7"
+                otherStyles="mt-2"
                 keyboardType="email-address"
               />
 
               <FormField
                 label="Password"
+                placeholder="********"
                 value={form.password}
                 handleChangeText={(e) => setForm({ ...form, password: e })}
-                otherStyles="mt-7"
+                otherStyles="mt-2"
+                password
               />
 
               <CustomButton
@@ -114,4 +116,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp
+export default SignUp;

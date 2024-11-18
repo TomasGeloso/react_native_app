@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import api from '@services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Device from 'expo-device';
 
 const useAuthStore = create(
   persist(
@@ -13,10 +14,14 @@ const useAuthStore = create(
       // Actions
       login: async (email, password) => {
         try {
-          const response = await api.post("/api/Auth/login", {
-            email,
-            password,
-          });
+            const response = await api.post("/api/Auth/login", {
+              email,
+              password,
+            }, {
+              headers: {
+                'Device': `${Device.osName} ${Device.osVersion}`,
+              },
+            });
           
           set({ isAuthenticated: true });
 

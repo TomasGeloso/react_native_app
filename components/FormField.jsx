@@ -2,7 +2,7 @@ import { View, Text, TextInput, Pressable } from 'react-native'
 import { useState } from 'react'
 import { EyeOff, Eye } from 'react-native-feather'
 
-const FormField = ({ label, value, placeholder, handleChangeText, otherStyles, multiline, ...props }) => {
+const FormField = ({ label, value, placeholder, handleChangeText, otherStyles, multiline, password, ...props }) => {
   
   const [showPassword, setshowPassword] = useState(false)
   
@@ -17,11 +17,11 @@ const FormField = ({ label, value, placeholder, handleChangeText, otherStyles, m
             placeholder={placeholder}
             placeholderTextColor={'#d1d5db'}
             onChangeText={handleChangeText}
-            secureTextEntry={label === 'Password' && !showPassword}
+            secureTextEntry={password && !showPassword}
             multiline={multiline}
         /> 
 
-        {label === 'Password' && (
+        {password && (
             <Pressable
             className="absolute right-3 top-4" 
             onPress={() => setshowPassword(!showPassword)}>
