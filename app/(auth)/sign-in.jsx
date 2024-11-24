@@ -6,12 +6,12 @@ import Logo from "@assets/logo.svg";
 import FormField from "@components/FormField";
 import CustomButton from "@components/CustomButton";
 import CustomAlert from "@components/CustomAlert";
-import useAuthStore from "@context/useAuthStore";
+import useAuth from "@hooks/useAuth";
 import { loginValidationSchema } from "@schemas/login";
 import { ValidationError } from "yup";
 
 const SignIn = () => {
-  const { login } = useAuthStore();
+  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 

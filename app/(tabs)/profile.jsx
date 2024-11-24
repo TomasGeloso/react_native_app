@@ -2,10 +2,10 @@ import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import CustomButton from '@components/CustomButton'
-import useAuthStore from '@context/useAuthStore'
+import useAuth from '@hooks/useAuth'
 
 const Profile = () => {
-  const { logout, error } = useAuthStore()
+  const { logout, error } = useAuth()
 
 
   return (

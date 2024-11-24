@@ -1,10 +1,8 @@
-import { View, Text } from 'react-native'
 import { Stack, Redirect } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
-import useAuthStore from '@context/useAuthStore'
+import authStore from '@context/authStore'
 
 const AuthLayout = () => {
-  const { isAuthenticated } = useAuthStore()
+  const { isAuthenticated } = authStore()
 
   if(isAuthenticated) {
     console.log('Redirecting to home')

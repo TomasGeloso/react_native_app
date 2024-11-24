@@ -1,29 +1,38 @@
-import { NativeWindStyleSheet } from "nativewind"; // Import the NativeWindStyleSheet from the "nativewind" to set Output to 'native', without this the web styles won't work
-import '../global.css';
-import { SplashScreen, Stack } from 'expo-router'
-import { useEffect } from 'react';
-import { useCustomFonts } from '@hooks/useFonts';
-import useAuthStore from '@context/useAuthStore';
+import { useEffect } from "react";
+import { ActivityIndicator, View } from "react-native";
+import { SplashScreen, Stack } from "expo-router";
+import "../global.css";
+import authStore from "@context/authStore";
+import { useCustomFonts } from "@hooks/useFonts";
 
-// NativeWindStyleSheet.setOutput({
-//   default: "native",
-// });
-SplashScreen.preventAutoHideAsync(); // Prevents the splash screen from hiding automatically
+SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
   const [fontsLoaded, fontError] = useCustomFonts();
-  const { checkAuth, rehydrated } = useAuthStore();
+  const { checkAuth, rehydrated } = authStore();
 
   useEffect(() => {
-    const authenticate = async () => {
-      console.log("Checking auth");
-      await checkAuth();
+    const prepare = async () => {
+      try {
+        await checkAuth();
+      } catch (error) {
+        console.error("Error checking auth: ", error);
+      } finally {
+        if (fontsLoaded || fontError) {
+          await SplashScreen.hideAsync();
+        }
+      }
     };
-    authenticate();
-  }, [checkAuth]);
 
-  if (!fontsLoaded && !fontError) return null;
-  if (!rehydrated) return null;
+    prepare();
+  }, [checkAuth, fontsLoaded, fontError]);
+
+  if ((!fontsLoaded && !fontError) || !rehydrated)
+    return (
+      <View className="align-middle justify-center">
+        <ActivityIndicator size="large" color="#111827" />
+      </View>
+    );
 
   console.log("rehydrated: ", rehydrated);
 
@@ -33,7 +42,7 @@ const RootLayout = () => {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
     </Stack>
-    );
+  );
 };
 
-export default RootLayout
+export default RootLayout;
