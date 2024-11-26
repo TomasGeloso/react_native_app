@@ -28,6 +28,25 @@ api.interceptors.request.use(
 );
 
 // Interceptor for responses - handle expired/invalid token
+
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+const addToQueue = (resolve, reject) => {
+  refreshSubscribers.push({ resolve, reject });
+};
+
+const processQueue = (token = null, error = null) => {
+  refreshSubscribers.map((subscriber) => {
+    if (error) {
+      subscriber.reject(error);
+    } else {
+      subscriber.resolve(token);
+    }
+  });
+  refreshSubscribers = [];
+};
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -40,14 +59,30 @@ api.interceptors.response.use(
     }
     
     if (error.response?.status === 401 && error.response.headers['token-expired']) {  // When accessToken expired
+      if (isRefreshing) {
+        return new Promise(async (resolve, reject) => {
+          addToQueue(resolve, reject);
+        }).then(token => {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return api(originalRequest);
+        }).catch(error => {
+          return Promise.reject(error);
+        });
+      }
+      
       console.log("Token expired. Attempting to renew token...");
+      isRefreshing = true;
 
       try {
         const newAccessToken = await renewAccessToken();
+        isRefreshing = false;
 
         await authStore.getState().storeToken(newAccessToken);
+        processQueue(newAccessToken);
         return api(originalRequest);
       } catch (refreshError) {
+        isRefreshing = false;
+        processQueue(null, refreshError);
         console.error("Failed to renew token: ", refreshError.response?.data?.message);
         await authStore.getState().logout();
         return Promise.reject(refreshError);
