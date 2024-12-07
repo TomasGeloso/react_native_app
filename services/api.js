@@ -19,8 +19,8 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    if (config.url === "/api/Auth/login") {
-      config.headers.deviceInfo = DEVICE_INFO;
+    if (config.url === "/api/Auth/login" || config.url === "/api/auth/refresh-token") {
+      config.headers.DeviceInfo = DEVICE_INFO;
     }
     return config;
   },
@@ -37,7 +37,7 @@ const addToQueue = (resolve, reject) => {
 };
 
 const processQueue = (token = null, error = null) => {
-  refreshSubscribers.map((subscriber) => {
+  refreshSubscribers.forEach((subscriber) => {
     if (error) {
       subscriber.reject(error);
     } else {
@@ -60,7 +60,7 @@ api.interceptors.response.use(
     
     if (error.response?.status === 401 && error.response.headers['token-expired']) {  // When accessToken expired
       if (isRefreshing) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
           addToQueue(resolve, reject);
         }).then(token => {
           originalRequest.headers.Authorization = `Bearer ${token}`;
@@ -95,10 +95,7 @@ api.interceptors.response.use(
 async function renewAccessToken() {
   try {
     const response = await api.post(
-      "/api/auth/refresh-token",
-      {},
-      { headers: { deviceInfo: DEVICE_INFO } }
-    );
+      "/api/auth/refresh-token");
     const { accessToken } = response.data;
 
     if (!accessToken) {

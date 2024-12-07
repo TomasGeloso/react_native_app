@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp, Check } from "react-native-feather";
 const CustomPicker = ({ label, className, ...props }) => {
   return (
     <View className={className}>
-      <Text className="text-sm font-medium font-psemibold text-gray-700 mb-1">{label}</Text>
+      <Text className="text-base font-csanssemibold text-secondary-100 mb-1 ml-1">{label}</Text>
       <DropDownPicker
         style={{    // style prop
           borderColor: "#d1d5db",
@@ -17,7 +17,7 @@ const CustomPicker = ({ label, className, ...props }) => {
         }}
         textStyle={{    // text styles
           color: "#374151",
-          fontFamily: "CerebriSans-SemiBold",
+          fontFamily: "CerebriSans-Medium",
           fontSize: 15,
         }}
         placeholderStyle={{ // placeholder styles

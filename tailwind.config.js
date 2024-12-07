@@ -13,11 +13,33 @@ module.exports = {
       },
       colors: {
         primary: {
-          DEFAULT: "#F2F2F2",
-          100: "#DFDFDF"
+          DEFAULT: "#F3F4F6", // Gris claro ideal para fondos principales.
+          100: "#FFFFFF",     // Blanco puro para secciones limpias.
+          200: "#F9FAFB",     // Gris muy claro para bordes o separaciones.
+          300: "#E5E7EB",     // Gris claro para elementos secundarios.
+          400: "#D1D5DB",     // Gris medio para detalles de fondo.
+          500: "#9CA3AF",     // Gris para texto secundario o deshabilitado.
         },
         secondary: {
-          DEFAULT: "#111827",
+          DEFAULT: "#1F2937", // Gris oscuro ideal para texto y contrastes.
+          100: "#4B5563",     // Gris medio para detalles como íconos o bordes.
+          200: "#374151",     // Gris más oscuro para encabezados.
+          700: "#111827",     // Gris antracita profundo para fondos contrastantes.
+        },        
+        danger: {
+          DEFAULT: "#EF4444",
+          100: "#FEE2E2",
+          700: "#B91C1C",
+        },
+        success: {
+          DEFAULT: "#10B981",
+          100: "#D1FAE5",
+          700: "#047857",
+        },
+        warning: {
+          DEFAULT: "#F59E0B",
+          100: "#FEF3C7",
+          700: "#B45309",
         },
         black: {
           DEFAULT: "#000",

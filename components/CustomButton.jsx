@@ -16,6 +16,11 @@ const CustomButton = ({
           pressable: "bg-primary border border-gray-300",
           text: "text-secondary",
         }
+      case "danger":
+        return {
+          pressable: "bg-danger",
+          text: "text-white",
+        };
       case "primary":
       default:
         return { 

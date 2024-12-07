@@ -1,9 +1,9 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text } from 'react-native'
 import { Tabs, Redirect } from 'expo-router'
 import authStore from '@context/authStore'
 import { Home, User, Bookmark, Plus } from 'react-native-feather'
 
-const TabIcon = ({ icon, color, name, focused }) => {
+const TabIcon = ({ color, name, focused }) => {
   return (
     <View className="items-center justify-center gap-1">
       {name === 'Home' && <Home color={color} /> }
@@ -29,8 +29,8 @@ const TabsLayout = () => {
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
-        tabBarActiveTintColor: '#000000',
-        tabBarInactiveTintColor: '#dfdfdf',
+        tabBarActiveTintColor: '#111827',
+        tabBarInactiveTintColor: '#D1D5DB',
         
         tabBarStyle: {
           backgroundColor: '#ffffff',

@@ -71,6 +71,8 @@ const SignIn = () => {
                 otherStyles="mt-2"
                 keyboardType="email-address"
                 autoCapitalize="none"
+                textContentType="emailAddress"
+                autoCompleteType="email"
               />
 
               <FormField
@@ -80,6 +82,8 @@ const SignIn = () => {
                 placeholder="********"
                 otherStyles="mt-2"
                 password
+                textContentType="password"
+                autoCompleteType="password"
               />
 
               <CustomButton

@@ -8,17 +8,18 @@ const FormField = ({ label, value, placeholder, handleChangeText, otherStyles, m
   
   return (
     <View className={`${otherStyles}`}>
-      <Text className="text-base font-csansbold text-gray-700 mb-1">{label}</Text>
+      <Text className="text-base font-csanssemibold text-secondary-100 mb-1 ml-1">{label}</Text>
       <View className="relative">
         <TextInput
-            className={`w-full px-4 py-2 bg-white text-gray-900 border-2 border-gray-300 rounded-xl ${multiline ? 'min-h-28 align-top pt-4' : 'h-14'}`}
+            className={`w-full px-4 py-2 bg-white text-secondary-200 font-csansmedium border-2 border-primary-400 rounded-xl ${multiline ? 'min-h-28 align-top pt-4' : 'h-14'}`}
 
             value={value}
             placeholder={placeholder}
-            placeholderTextColor={'#d1d5db'}
+            placeholderTextColor={'#D1D5DB'}
             onChangeText={handleChangeText}
             secureTextEntry={password && !showPassword}
             multiline={multiline}
+            {...props}
         /> 
 
         {password && (
