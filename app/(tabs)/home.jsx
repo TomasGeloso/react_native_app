@@ -2,7 +2,6 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
-  FlatList,
   Pressable,
   TextInput,
   Modal,
@@ -12,7 +11,8 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from "react-native";
-import { Search, Plus, Camera } from "react-native-feather";
+import { FlashList } from "@shopify/flash-list";
+import { Search, Plus, Camera, Filter } from "react-native-feather";
 import Logo from "@assets/logo.svg";
 
 import useSample from "@hooks/useSample";
@@ -24,14 +24,21 @@ import FormField from "@components/FormField";
 import CustomButton from "@components/CustomButton";
 import CustomAlert from "@components/CustomAlert";
 import CustomPicker from "@components/CustomPicker";
-
-import { sampleValidationSchema } from "@schemas/sample";
+import ConfirmationAlertButton from "@components/ConfirmationAlertButton";
 import { SampleCard } from "@components/SampleCard";
 
+import { sampleValidationSchema } from "@schemas/sample";
 
 const Home = () => {
   // Fetch data from API --------------------------------------------------------------------------------------
-  const { samples, loading, error: sampleError, postSample, putSample, deleteSample } = useSample();
+  const {
+    samples,
+    loading,
+    error: sampleError,
+    postSample,
+    putSample,
+    deleteSample,
+  } = useSample();
   const {
     materials: fetchedMaterials,
     loading: loadingMaterials,
@@ -48,7 +55,6 @@ const Home = () => {
     error: errorTestSpecimenTypes,
   } = useTestSpecimenTypes();
 
-  
   // Set dropdown items when data is fetched ------------------------------------------------------------------
   useEffect(() => {
     if (fetchedMaterials && fetchedMaterials.length > 0) {
@@ -80,6 +86,7 @@ const Home = () => {
 
   // Home screen states ---------------------------------------------------------------------------------------
   const [searchQuery, setSearchQuery] = useState("");
+  const [isFilterSelected, setIsFilterSelected] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const textInputRef = useRef(null);
 
@@ -87,20 +94,20 @@ const Home = () => {
   const [createSampleError, setCreateSampleError] = useState(null);
   const [isEditingSample, setIsEditingSample] = useState(false);
   const [selectedSampleToEdit, setSelectedSampleToEdit] = useState(null);
-  
+
   // SampleTypes dropdown states
-  const [selectedSampleType, setSelectedSampleType] = useState(null); 
+  const [selectedSampleType, setSelectedSampleType] = useState(null);
   const [sampleTypes, setSampleTypes] = useState([]);
-  
+
   // TestSpecimenTypes dropdown states
   const [selectedTestSpecimenType, setSelectedTestSpecimenType] =
-  useState(null);
+    useState(null);
   const [testSpecimenTypes, setTestSpecimenTypes] = useState([]);
-  
+
   // Materials dropdown states
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [materials, setMaterials] = useState([]);
-  
+
   // Dropdown open/close states
   const [dropdownStates, setDropdownStates] = useState({
     sampleTypes: false,
@@ -116,22 +123,32 @@ const Home = () => {
   });
 
   // Search samples by filter ----------------------------------------------------------------------------------
-const filteredSamples = samples.filter(
-  (sample) =>
-    (sample.sample_Number && sample.sample_Number.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    (sample.dimentions && sample.dimentions.toLowerCase().includes(searchQuery.toLowerCase()))
-);
+  const filteredSamples = useCallback(() => {
+    if (!searchQuery.trim()) return samples;
+    
+    return samples.filter(sample => {
+      return (
+        sample?.sample_Number?.toString().toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        sample?.dimentions?.toString().toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        sample?.material?.name?.toLowerCase().includes(searchQuery.toLowerCase().trim()) || 
+        sample?.sample_Type?.name?.toLowerCase().includes(searchQuery.toLowerCase().trim()) 
+      );
+    });
+  }, [samples, searchQuery]);
 
   // Sample item ----------------------------------------------------------------------------------------------
-  const renderSample = useCallback(({ item }) => (
-    <SampleCard 
-      sample={item}
-      className="m-1"
-      onEditPress={() => handleEditSamplePress(item)}
+  const renderSample = useCallback(
+    ({ item }) => (
+      <SampleCard
+        sample={item}
+        className="m-1"
+        onEditPress={() => handleEditSamplePress(item)}
       />
-  ) ,[]);
+    ),
+    []
+  );
 
-  // Edit button in sample card 
+  // Edit button in sample card
   const handleEditSamplePress = useCallback((sample) => {
     setIsEditingSample(true);
     setSelectedSampleToEdit(sample);
@@ -172,50 +189,60 @@ const filteredSamples = samples.filter(
   }, [selectedSampleToEdit]);
 
   // Create/Edit button in Create/Edit sample modal
-    // When Creating 
-    const handleCreateSample = useCallback(async () => {
-      try {
-        const newSampleData = {
-          sample_Number: textSampleData.sampleNumber,
-          sample_Type_Id: selectedSampleType,
-          material_Id: selectedMaterial,
-          test_Specimen_Type_Id: selectedTestSpecimenType,
-          dimentions: textSampleData.dimentions,
-          observations: textSampleData.observations,
-        };
-        
-        await sampleValidationSchema.validate(newSampleData);
-        await postSample(newSampleData);
+  // When Creating
+  const handleCreateSample = useCallback(async () => {
+    try {
+      const newSampleData = {
+        sample_Number: textSampleData.sampleNumber,
+        sample_Type_Id: selectedSampleType,
+        material_Id: selectedMaterial,
+        test_Specimen_Type_Id: selectedTestSpecimenType,
+        dimentions: textSampleData.dimentions,
+        observations: textSampleData.observations,
+      };
 
-        resetFormData();
-  
-      } catch (error) {
-        setCreateSampleError(error);
-        console.error("Error creating sample:", error);
-      }
-    }, [textSampleData, selectedSampleType, selectedMaterial, selectedTestSpecimenType]);
-    
-    // When Editing
-    const handleEditSample = useCallback(async () => {
-      try {
-        const editedSampleData = {
-          sample_Number: textSampleData.sampleNumber,
-          sample_Type_Id: selectedSampleType,
-          material_Id: selectedMaterial,
-          test_Specimen_Type_Id: selectedTestSpecimenType,
-          dimentions: textSampleData.dimentions,
-          observations: textSampleData.observations,
-        };
+      await sampleValidationSchema.validate(newSampleData);
+      await postSample(newSampleData);
 
-        await sampleValidationSchema.validate(editedSampleData);
-        await putSample(selectedSampleToEdit.id, editedSampleData);
+      resetFormData();
+    } catch (error) {
+      setCreateSampleError(error);
+      console.error("Error creating sample:", error);
+    }
+  }, [
+    textSampleData,
+    selectedSampleType,
+    selectedMaterial,
+    selectedTestSpecimenType,
+  ]);
 
-        resetFormData();
-      } catch (error) {
-        setCreateSampleError(error);
-        console.error("Error editing sample:", error);
-      }
-    }, [textSampleData, selectedSampleType, selectedMaterial, selectedTestSpecimenType, selectedSampleToEdit]);
+  // When Editing
+  const handleEditSample = useCallback(async () => {
+    try {
+      const editedSampleData = {
+        sample_Number: textSampleData.sampleNumber,
+        sample_Type_Id: selectedSampleType,
+        material_Id: selectedMaterial,
+        test_Specimen_Type_Id: selectedTestSpecimenType,
+        dimentions: textSampleData.dimentions,
+        observations: textSampleData.observations,
+      };
+
+      await sampleValidationSchema.validate(editedSampleData);
+      await putSample(selectedSampleToEdit.id, editedSampleData);
+
+      resetFormData();
+    } catch (error) {
+      setCreateSampleError(error);
+      console.error("Error editing sample:", error);
+    }
+  }, [
+    textSampleData,
+    selectedSampleType,
+    selectedMaterial,
+    selectedTestSpecimenType,
+    selectedSampleToEdit,
+  ]);
 
   // Open/close other dropdowns when one is pressed -----------------------------------------------------------
   const handleOpenDropdown = useCallback((dropdownId) => {
@@ -239,7 +266,8 @@ const filteredSamples = samples.filter(
     setSelectedSampleType(null);
     setSelectedTestSpecimenType(null);
     setDetailModalVisible(false);
-  }
+  };
+
 
   return (
     <SafeAreaView
@@ -256,25 +284,86 @@ const filteredSamples = samples.filter(
         </View>
       ) : (
         <View className="h-full pb-20">
-          <Pressable
-            className="flex-row items-center justify-between bg-primary-100 rounded-full mx-3 p-2 px-3 shadow"
-            onPress={() => textInputRef.current?.focus()}
-          >
-            <TextInput
-              ref={textInputRef}
-              className="flex-1 text-base border-0 outline-none"
-              placeholder="Buscar muestras..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-            <Search color="#666" width={25} height={25} />
-          </Pressable>
 
-          <FlatList
-            data={filteredSamples}
+          <View className="flex-row gap-1 mx-2 items-center justify-between">
+            <View className="flex-row items-center bg-primary-100 rounded-full p-2 px-3 shadow-sm flex-1">
+              <TextInput
+                ref={textInputRef}
+                className="flex-1 text-base border-0 outline-none font-csansregular"
+                placeholder="Buscar muestras..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+              <Pressable onPress={() => textInputRef.current?.focus()}>
+                <Search color="#6B7280" width={25} height={25} />
+              </Pressable>
+            </View>
+
+            <Pressable 
+              className={`${isFilterSelected ? "bg-gray-300" : "bg-primary-100"} rounded-full p-3`}
+              onPress={() => setIsFilterSelected(!isFilterSelected)}
+            >
+              <Filter color="#6B7280" width={20} height={20} />
+            </Pressable>
+          </View>
+          {isFilterSelected && (
+          <View className="flex gap-2 mx-1 my-2">
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {sampleTypes.map((type, index) => (
+                <Pressable
+                  key={type.value}
+                  className={`${
+                    searchQuery === type.label
+                      ? "bg-gray-300 border-primary-400"
+                      : "bg-primary-100 border-primary-100"
+                  } rounded-full ${
+                    index !== 0 ? "mx-2" : ""
+                  } p-2 px-3 shadow-sm`}
+                  onPress={() => setSearchQuery(type.label)}
+                >
+                  <Text className="text-base font-csansregular">
+                    {type.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {materials.map((material, index) => (
+                <Pressable
+                  key={material.value}
+                  className={`${
+                    searchQuery === material.label
+                      ? "bg-gray-300"
+                      : "bg-primary-100"
+                  } rounded-full ${
+                    index !== 0 ? "mx-2" : ""
+                  } p-2 px-3 shadow-sm`}
+                  onPress={() => setSearchQuery(material.label)}
+                >
+                  <Text className="text-base font-csansregular">
+                    {material.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+          )}
+          
+          <FlashList
+            data={filteredSamples()}
             renderItem={renderSample}
             keyExtractor={(sample) => sample.id.toString()}
-            className="m-1 h-full"
+            className="m-1"
+            contentContainerStyle={{ paddingBottom: 9 }}
+            estimatedItemSize={169}
+            ListEmptyComponent={() => (
+              <View className="flex-1 m-3 justify-center items-center">
+                <Text className="text-primary-500">
+                  No se encontraron resultados
+                </Text>
+              </View>
+            )}
           />
         </View>
       )}
@@ -302,7 +391,10 @@ const filteredSamples = samples.filter(
           behavior={Platform.OS === "android" ? "padding" : "height"}
           className="h-full"
         >
-          <ScrollView className="h-full bg-primary">
+          <ScrollView 
+          className="h-full bg-primary"
+          nestedScrollEnabled={true}
+          >
             <View className="m-2 bg-primary z-40">
               <Text className="text-2xl font-csanssemibold">Crear Muestra</Text>
             </View>
@@ -323,7 +415,7 @@ const filteredSamples = samples.filter(
                   <Camera color="#111827" />
                 </View>
               </View>
-              
+
               <View className="mt-2">
                 <FormField
                   label="Número de Muestra"
@@ -396,27 +488,36 @@ const filteredSamples = samples.filter(
                     type="secondary"
                     onPress={handleCancelCreateSample}
                   />
-                  { isEditingSample ? (
+
+                  {isEditingSample ? (
                     <>
-                      <CustomButton
-                      title="Eliminar"
-                      type="danger"
-                      onPress={handleDeleteSample}
+                      <ConfirmationAlertButton
+                        buttonTitle="Eliminar"
+                        buttonType="danger"
+                        alertTitle="Confirmar Eliminación"
+                        alertMessage="¿Estás seguro de que deseas eliminar esta muestra?"
+                        onConfirm={handleDeleteSample}
+                        onCancel={() => {}}
                       />
-                      <CustomButton
-                        title="Modificar"
-                        type="primary"
-                        onPress={handleEditSample}
+                      <ConfirmationAlertButton
+                        buttonTitle="Modificar"
+                        buttonType="primary"
+                        alertTitle="Confirmar Modificación"
+                        alertMessage="¿Estás seguro de que deseas modificar esta muestra?"
+                        onConfirm={handleEditSample}
+                        onCancel={() => {}}
                       />
                     </>
                   ) : (
-                    <CustomButton
-                      title="Crear"
-                      type="primary"
-                      onPress={handleCreateSample}
+                    <ConfirmationAlertButton
+                      buttonTitle="Crear"
+                      buttonType="primary"
+                      alertTitle="Confirmar Creación"
+                      alertMessage="¿Estás seguro de que deseas crear esta muestra?"
+                      onConfirm={handleCreateSample}
+                      onCancel={() => {}}
                     />
-                  )
-                  }
+                  )}
                 </View>
               </View>
             </View>

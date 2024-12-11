@@ -1,41 +1,23 @@
-import { View, ScrollView, Alert } from 'react-native'
-import React from 'react'
+import { View, ScrollView } from 'react-native'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import CustomButton from '@components/CustomButton'
-import DeleteAlert from '@components/DeleteAlert'
+import CustomAlertModal from '@components/CustomAlertModal'
 import authStore from '@context/authStore'
 
 const Profile = () => {
   const { logout } = authStore()
 
+  const [isAlertModalVisible, setIsAlertModalVisible] = useState(false)
+
   const handlePruebaPress = () => {
-    Alert.alert(
-      "Confirmar eliminación",
-      `¿Estás seguro que deseas eliminar?`,
-      [
-        {
-          text: "Cancelar",
-          style: "cancel"
-        },
-        { 
-          text: "Eliminar", 
-          onPress: () => onDelete(),
-          style: "destructive"
-        }
-      ],
-      { cancelable: false }
-    );
+    setIsAlertModalVisible(true)
   }
 
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
         <View className="w-full justify-center min-h-screen">
-          {/* {error && ( // Displays the error message if there is an error
-            <Text className="text-red-500 text-center mt-2">
-              {error}
-            </Text>
-          )} */}
 
           <CustomButton 
             title="Sign Out"
@@ -43,9 +25,17 @@ const Profile = () => {
             containerStyles="w-full mt-7"
           />
 
-          <DeleteAlert>
-
-          </DeleteAlert>
+          <CustomButton
+            title="Open Modal"
+            onPress={() => handlePruebaPress()}
+            containerStyles="w-full mt-7"
+          />
+           
+           <CustomAlertModal
+              visible={isAlertModalVisible}
+              onCancel={() => setIsAlertModalVisible(false)}
+              onConfirm={() => setIsAlertModalVisible(false)}
+            />
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -21,7 +21,7 @@ export const sampleValidationSchema = yup.object().shape({
 
     dimentions: yup
     .string()
-    .matches(/^\d+(?:x\d+){2,3}$/, 'Dimentions must be in format "NxNxN" or "NxNxNxN"')
+    .matches(/^\d+(\.\d+)?(?:x\d+(\.\d+)?){2,3}$/, 'Dimentions must be in format "NxNxN" or "NxNxNxN"')
     .max(100, 'Dimentions must be at most 100 characters')
     .nullable(),
     

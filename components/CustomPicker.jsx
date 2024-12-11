@@ -32,7 +32,7 @@ const CustomPicker = ({ label, className, ...props }) => {
         ArrowDownIconComponent={({style}) => <ChevronDown stroke="#374151" strokeWidth={1.5} />}
         ArrowUpIconComponent={({style}) => <ChevronUp stroke="#374151" strokeWidth={1.5} />}
         TickIconComponent={({style}) => <Check stroke="#374151" strokeWidth={1.5} />}
-        listMode="SCROLLVIEW" // Instead of FLATLIST, wich cannot be nested inside a ScrollView
+        listMode="MODAL" // Instead of FLATLIST, wich cannot be nested inside a ScrollView
         {...props}
       />
     </View>
